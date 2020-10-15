@@ -28,16 +28,15 @@ namespace MobGame
         int yIntersect;
         int[] xIntersectFact = new int[8];
         int[] yIntersectFact = new int[8];
-        Point mobFirstLocation = new Point();
 
         double[] L0 = new double[9]; 
         double[] L1 = new double[10];
         double[] L2 = new double[10];
-        double[] L3 = new double[4];
+        double[] L3 = new double[3];
 
         double[,] W01 = new double[9, 9];
         double[,] W12 = new double[9, 10];
-        double[,] W23 = new double[4, 10];
+        double[,] W23 = new double[3, 10];
 
         short W01Length0;
         short W01Length1;
@@ -51,7 +50,6 @@ namespace MobGame
         int mobUpIteration;
         int oneGenerationIteration;
         int firstGenerationIteration;
-        int globalCycleIteration;
         double mutationRange;
         int generationNum;
 
@@ -145,7 +143,7 @@ namespace MobGame
                 //GameOver("You lost a game in\nwhich you just need\nto collect coins :|");
             }
         }
-        private void DownMoveDef()
+        /*private void DownMoveDef()
         {
             MainPlayer.Image = RotateImage((Bitmap)imgMainPlayer[1], angle);
             if (true)
@@ -162,7 +160,7 @@ namespace MobGame
             {
                 //GameOver("You lost a game in\nwhich you just need\nto collect coins :|");
             }
-        }
+        }*/
 
         private double Sigmoid(double x)
         {
@@ -610,25 +608,14 @@ namespace MobGame
             Forward(L0, W01, L1);
             Forward(L1, W12, L2);
             Forward(L2, W23, L3);
-            double[] move = new double[] { L3[0], L3[3] };
-            double[] rotate = new double[] { L3[1], L3[2] };
-            double maxMoveVal = move.Max();
-            double maxRotateVal = rotate.Max();
+            double maxRotateVal = Math.Max(L3[1], L3[2]);
 
-            if (maxMoveVal > 0.5)
+            if (L3[0] > 0.5)
             {
-                switch(Array.IndexOf(L3, maxMoveVal))
-                {
-                    case 0:
-                        UpMoveDef();
-                        break;
-                    case 3:
-                        DownMoveDef();
-                        break;
-                }
+                UpMoveDef();
             }
 
-            if(maxRotateVal > 0.5 && Array.IndexOf(L3, maxRotateVal) != 0 && Array.IndexOf(L3, maxRotateVal) != 3)
+            if(maxRotateVal > 0.5 && Array.IndexOf(L3, maxRotateVal) != 0)
             {
                 switch (Array.IndexOf(L3, maxRotateVal))
                 {
@@ -637,6 +624,8 @@ namespace MobGame
                         break;
                     case 2:
                         RightRotateDef();
+                        break;
+                    default:
                         break;
                 }
             }
